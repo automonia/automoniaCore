@@ -8,9 +8,9 @@
         <version>2.1.2.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.github.automonia</groupId>
+    <groupId>com.automonia</groupId>
     <artifactId>automoniaCore</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2</version>
     <name>automoniaCore</name>
     <description>Demo project for Spring Boot</description>
 
