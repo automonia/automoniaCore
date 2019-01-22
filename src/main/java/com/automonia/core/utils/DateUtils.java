@@ -400,6 +400,17 @@ public enum DateUtils {
         }
     }
 
+    /**
+     * 去年的今天
+     *
+     * @param date
+     * @return
+     */
+    public static Date getDayOfLastYear(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(calendar.get(Calendar.YEAR) - 1, calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+        return calendar.getTime();
+    }
 //    /**
 //     * 是否是今天
 //     *
