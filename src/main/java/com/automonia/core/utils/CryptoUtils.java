@@ -2,11 +2,13 @@ package com.automonia.core.utils;
 
 
 import com.automonia.core.base.exception.CryptoException;
+import org.apache.commons.codec.binary.Base64;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
+import java.io.UnsupportedEncodingException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -66,25 +68,25 @@ public enum CryptoUtils {
         return MD5Util.MD5Encode(sb.toString(), "UTF-8").toUpperCase();
     }
 
-//    /**
-//     * BASE64加密,默认UTF-8
-//     *
-//     * @param str a {@link String} object.
-//     * @return a {@link String} object.
-//     */
-//    public String encodeBASE64(final String str) {
-//        return encodeBASE64(str, DEFAULT_CHARSET);
-//    }
-//
-//    /**
-//     * BASE64解密,默认UTF-8
-//     *
-//     * @param str a {@link String} object.
-//     * @return a {@link String} object.
-//     */
-//    public String decodeBASE64(String str) {
-//        return decodeBASE64(str, DEFAULT_CHARSET);
-//    }
+    /**
+     * BASE64加密,默认UTF-8
+     *
+     * @param str a {@link String} object.
+     * @return a {@link String} object.
+     */
+    public String encodeBASE64(final String str) {
+        return encodeBASE64(str, DEFAULT_CHARSET);
+    }
+
+    /**
+     * BASE64解密,默认UTF-8
+     *
+     * @param str a {@link String} object.
+     * @return a {@link String} object.
+     */
+    public String decodeBASE64(String str) {
+        return decodeBASE64(str, DEFAULT_CHARSET);
+    }
 
     /**
      * 加密明文字符串
@@ -142,40 +144,40 @@ public enum CryptoUtils {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-//    /**
-//     * BASE64解密
-//     *
-//     * @param str     a {@link String} object.
-//     * @param charset 字符编码
-//     * @return a {@link String} object.
-//     */
-//    private String decodeBASE64(String str, String charset) {
-//        try {
-//            byte[] bytes = str.getBytes(charset);
-//            return new String(Base64.decodeBase64(bytes));
-//        } catch (UnsupportedEncodingException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
-//
-//    /**
-//     * BASE64加密
-//     *
-//     * @param str     a {@link String} object.
-//     * @param charset a {@link String} object.
-//     * @return a {@link String} object.
-//     */
-//    private String encodeBASE64(final String str, String charset) {
-//        if (str == null) {
-//            return null;
-//        }
-//        try {
-//            byte[] bytes = str.getBytes(charset);
-//            return Base64.encodeBase64String(bytes);
-//        } catch (UnsupportedEncodingException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
+    /**
+     * BASE64解密
+     *
+     * @param str     a {@link String} object.
+     * @param charset 字符编码
+     * @return a {@link String} object.
+     */
+    private String decodeBASE64(String str, String charset) {
+        try {
+            byte[] bytes = str.getBytes(charset);
+            return new String(Base64.decodeBase64(bytes));
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * BASE64加密
+     *
+     * @param str     a {@link String} object.
+     * @param charset a {@link String} object.
+     * @return a {@link String} object.
+     */
+    private String encodeBASE64(final String str, String charset) {
+        if (str == null) {
+            return null;
+        }
+        try {
+            byte[] bytes = str.getBytes(charset);
+            return Base64.encodeBase64String(bytes);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private Key getPBEKey(String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
         /**
