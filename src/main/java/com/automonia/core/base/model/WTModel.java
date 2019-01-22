@@ -1,7 +1,5 @@
 package com.automonia.core.base.model;
 
-import java.util.Date;
-
 /**
  * 实体对象的基本的接口
  * 对象实体对象要求有这么几个基本的属性
@@ -19,12 +17,12 @@ public interface WTModel {
 
     void setId(String id);
 
-    Date getCreateDate();
-
-    void setCreateDate(Date createDate);
-
-    Date getUpdateDate();
-
-    void setUpdateDate(Date updateDate);
+//    Date getCreateDate();
+//
+//    void setCreateDate(Date createDate);
+//
+//    Date getUpdateDate();
+//
+//    void setUpdateDate(Date updateDate);
 
 }

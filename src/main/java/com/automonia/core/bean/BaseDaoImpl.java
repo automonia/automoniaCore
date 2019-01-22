@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.List;
 
@@ -86,8 +87,9 @@ public class BaseDaoImpl implements BaseDao {
     }
 
     public void update(WTQuery query, WTModel model) throws ClassNotFoundException, WithoutEntityAnnotationException, EntityWithoutTableAnnotationException, NotSupportedTypeException, NoSuchFieldException, ParameterIsNullException, BusinessException {
+
         // 每次更新操作都更新updateDate
-        model.setUpdateDate(new Date());
+        setUpdateDate(model);
 
         executeSql(dataBaseFactory.getSqlOfUpdate(query, model));
     }
@@ -124,8 +126,8 @@ public class BaseDaoImpl implements BaseDao {
             return null;
         }
 
-        model.setCreateDate(new Date());
-        model.setUpdateDate(new Date());
+        setUpdateDate(model);
+        setCreateDate(model);
 
         executeSql(dataBaseFactory.getSqlOfInsert(model));
 
@@ -175,5 +177,22 @@ public class BaseDaoImpl implements BaseDao {
         jdbcTemplate.update(sqlValue);
     }
 
+    private void setCreateDate(WTModel model) {
+        try {
+            Method setCreateDateMethod = model.getClass().getMethod("setCreateDate", Date.class);
+            setCreateDateMethod.invoke(model, new Date());
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setUpdateDate(WTModel model) {
+        try {
+            Method setUpdateDateMethod = model.getClass().getMethod("setUpdateDate", Date.class);
+            setUpdateDateMethod.invoke(model, new Date());
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
 
 }
