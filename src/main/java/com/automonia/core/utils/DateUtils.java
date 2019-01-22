@@ -9,11 +9,12 @@ public enum DateUtils {
 
     singleton;
 
-
     /**
      * 日期时间格式对象
      */
     private SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    private SimpleDateFormat wechatPayTimeFormat = new SimpleDateFormat("yyyyMMddHHmmss");
 
     /**
      * 日期格式对象
@@ -24,6 +25,29 @@ public enum DateUtils {
      * 时间格式对象
      */
     private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+
+
+    //////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * 衡量时间是否过期
+     *
+     * @param expireDate    需要衡量是否过期的时间
+     * @param referenceDate 相对比较的时间点，expireDate超过改时间则设定为过期,默认是当前时间
+     * @return
+     */
+    public Boolean dateIsExpire(Date expireDate, Date referenceDate) {
+        if (expireDate == null) {
+            return false;
+        }
+
+        if (referenceDate == null) {
+            referenceDate = new Date();
+        }
+
+        return expireDate.before(referenceDate);
+    }
 
 
     /**
@@ -51,6 +75,13 @@ public enum DateUtils {
         return dateTimeFormat.format(date);
     }
 
+    public String getWechatPayTimeString(Date date) {
+        if (date == null) {
+            return null;
+        }
+        return wechatPayTimeFormat.format(date);
+    }
+
     /**
      * 将日期对象转成日期格式的字符串
      *
@@ -58,9 +89,6 @@ public enum DateUtils {
      * @return 日期字符串
      */
     public String getDateString(Date date) {
-        if (date == null) {
-            return null;
-        }
         return dateFormat.format(date);
     }
 
@@ -83,25 +111,17 @@ public enum DateUtils {
      * @param dateStr 日期时间字符串
      * @return 日期对象
      */
-    public Date getAllFormatDate(String dateStr) {
-        if (StringUtils.isEmpty(dateStr)) {
-            return null;
-        }
-        // 将所有.xxx开头的时间格式的字符串都返回null进行处理
-        if (dateStr.startsWith(".")) {
-            return null;
-        }
+    public Date getFullDate(String dateStr) {
         try {
-            if (dateStr.matches("\\d{1,4}-\\d{1,2}-\\d{1,2} \\d{1,2}:\\d{1,2}:\\d{1,2}.\\d")) {
-                return dateTimeFormat.parse(dateStr.substring(0, 19));
-            } else if (dateStr.matches("\\d{1,4}-\\d{1,2}-\\d{1,2}")) {
+            if (dateStr.matches("\\d{1,4}-\\d{1,2}-\\d{1,2}")) {
                 return dateFormat.parse(dateStr);
             } else if (dateStr.matches("\\d{1,4}-\\d{1,2}-\\d{1,2} \\d{1,2}:\\d{1,2}:\\d{1,2}")) {
                 return dateTimeFormat.parse(dateStr);
             } else if (dateStr.matches("\\d{1,2}:\\d{1,2}:\\d{1,2}")) {
                 return timeFormat.parse(dateStr);
             }
-        } catch (Exception e) {
+            return dateTimeFormat.parse(dateStr);
+        } catch (ParseException e) {
             e.printStackTrace();
         }
         return null;
@@ -182,23 +202,40 @@ public enum DateUtils {
      * @param days 控制往后的天数,
      * @return 时间对象
      */
-    public Date getDateAfterDay(Integer days) {
+    public Date getDateAfterDay(Date date, Integer days) {
         if (days == null) {
-            return new Date();
+            return null;
         }
+        if (date == null) {
+            date = new Date();
+        }
+
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
+        calendar.setTime(date);
         calendar.add(Calendar.DATE, days);
         return calendar.getTime();
     }
 
-    public Date getDateAfterMin(Integer minute) {
+    public Date getDateAfterMin(Date date, Integer minute) {
         if (minute == null) {
-            return new Date();
+            return null;
+        }
+        if (date == null) {
+            date = new Date();
         }
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
+        calendar.setTime(date);
         calendar.add(Calendar.MINUTE, minute);
+        return calendar.getTime();
+    }
+
+    public Date getDateAfterMonth(Date date, Integer month) {
+        if (month == null || date == null) {
+            return null;
+        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.MONTH, month);
         return calendar.getTime();
     }
 
@@ -239,8 +276,11 @@ public enum DateUtils {
         return getDaysBetween(startCalendar.getTime(), endCalendar.getTime());
     }
 
-    public Date getFirstDayInDay() {
+    public Date getFirstDayInDay(Date date) {
         Calendar calendar = Calendar.getInstance();
+        if (date != null) {
+            calendar.setTime(date);
+        }
 
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.SECOND, 0);
@@ -250,8 +290,11 @@ public enum DateUtils {
         return calendar.getTime();
     }
 
-    public Date getLastDayInDay() {
+    public Date getLastDayInDay(Date date) {
         Calendar calendar = Calendar.getInstance();
+        if (date != null) {
+            calendar.setTime(date);
+        }
 
         calendar.set(Calendar.HOUR_OF_DAY, 24);
         calendar.set(Calendar.SECOND, 0);
@@ -264,8 +307,11 @@ public enum DateUtils {
     /**
      * @return 获取所在周的第一天
      */
-    public Date getFirstDayInWeek() {
+    public Date getFirstDayInWeek(Date date) {
         Calendar calendar = Calendar.getInstance();
+        if (date != null) {
+            calendar.setTime(date);
+        }
 
         calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONDAY), calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
         calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
@@ -275,9 +321,9 @@ public enum DateUtils {
     /**
      * @return 获取所在周的最后一天
      */
-    public Date getLastDayInWeek() {
+    public Date getLastDayInWeek(Date date) {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(getFirstDayInWeek());
+        calendar.setTime(getFirstDayInWeek(date));
         calendar.set(Calendar.DATE, calendar.get(Calendar.DATE) + 7);
         return calendar.getTime();
     }
@@ -285,19 +331,62 @@ public enum DateUtils {
     /**
      * @return 获取所在月的第一天
      */
-    public Date getFirstDayInMonth() {
+    public Date getFirstDayInMonth(Date date) {
         Calendar calendar = Calendar.getInstance();
+        if (date != null) {
+            calendar.setTime(date);
+        }
 
         calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONDAY), calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
         calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
         return calendar.getTime();
     }
 
+//    /**
+//     * 获取前一个月的第一天
+//     *
+//     * @param date 当前时间
+//     * @return
+//     */
+//    public Date getFirstDayInPreviousMonth(Date date) {
+//        Calendar calendar = Calendar.getInstance();
+//        if (date != null) {
+//            calendar.setTime(date);
+//        }
+//
+//        calendar.set(Calendar.MONTH, -1);
+//        calendar.set(Calendar.DAY_OF_MONTH, 0);
+//
+//        return calendar.getTime();
+//    }
+//
+//
+//    /**
+//     * 获取前一个月的最后一天
+//     *
+//     * @param date 当前时间
+//     * @return
+//     */
+//    public Date getLastDayInPreviousMonth(Date date) {
+//        Calendar calendar = Calendar.getInstance();
+//        if (date != null) {
+//            calendar.setTime(date);
+//        }
+//        calendar.set(Calendar.DAY_OF_MONTH, 0);
+//
+//        return calendar.getTime();
+//    }
+
+
     /**
      * @return 获取所在月的最后一天
      */
-    public Date getLastDayInMonth() {
+    public Date getLastDayInMonth(Date date) {
         Calendar calendar = Calendar.getInstance();
+        if (date != null) {
+            calendar.setTime(date);
+        }
+
         calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONDAY), calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
         calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
         calendar.set(Calendar.HOUR_OF_DAY, 24);
@@ -307,8 +396,11 @@ public enum DateUtils {
     /**
      * @return 获取所在季度的第一天
      */
-    public Date getFirstDayInQuarter() {
+    public Date getFirstDayInQuarter(Date date) {
         Calendar calendar = Calendar.getInstance();
+        if (date != null) {
+            calendar.setTime(date);
+        }
         Integer currentMonth = calendar.get(Calendar.MONTH) + 1;
 
         if (currentMonth >= 1 && currentMonth <= 3) {
@@ -331,9 +423,9 @@ public enum DateUtils {
     /**
      * @return 获取所在季度的最后一天
      */
-    public Date getLastDayInQuarter() {
+    public Date getLastDayInQuarter(Date date) {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(getFirstDayInQuarter());
+        calendar.setTime(getFirstDayInQuarter(date));
         calendar.add(Calendar.MONTH, 3);
         return calendar.getTime();
     }
@@ -341,8 +433,12 @@ public enum DateUtils {
     /**
      * @return 获取所在年份的第一天
      */
-    public Date getFirstDayInYear() {
+    public Date getFirstDayInYear(Date date) {
         Calendar calendar = Calendar.getInstance();
+        if (date != null) {
+            calendar.setTime(date);
+        }
+
         calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONDAY), calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
         calendar.set(Calendar.DAY_OF_YEAR, calendar.getActualMinimum(Calendar.DAY_OF_YEAR));
         return calendar.getTime();
@@ -351,9 +447,9 @@ public enum DateUtils {
     /**
      * @return 获取所在年份的最后一天
      */
-    public Date getLastDayInYear() {
+    public Date getLastDayInYear(Date date) {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(getFirstDayInYear());
+        calendar.setTime(getFirstDayInYear(date));
         calendar.add(Calendar.YEAR, 1);
         return calendar.getTime();
     }
@@ -401,6 +497,52 @@ public enum DateUtils {
     }
 
     /**
+     * 是否是今天
+     *
+     * @param date 日期
+     * @return true 今天。 false 不是今天
+     */
+    public Boolean isToday(Date date) {
+        if (date == null) {
+            return false;
+        }
+
+        String todayString = DateUtils.singleton.getDateString(new Date());
+        String dateString = DateUtils.singleton.getDateString(date);
+
+        return todayString.equals(dateString);
+    }
+
+    /**
+     * 是否是昨天
+     *
+     * @param date 日期
+     * @return true 昨天， false 不是昨天
+     */
+    public Boolean isYesterday(Date date) {
+        if (date == null) {
+            return false;
+        }
+
+        Date yesterday = DateUtils.singleton.getDateAfterDay(new Date(), -1);
+        String yesterdayString = DateUtils.singleton.getDateString(yesterday);
+        String dateString = DateUtils.singleton.getDateString(date);
+
+        return yesterdayString.equals(dateString);
+    }
+
+
+    /**
+     * 判断是否失效时间是否到了
+     *
+     * @param expiresInDate 失效时间
+     * @return true 失效了， false 未失效
+     */
+    public static Boolean isPast(Date expiresInDate) {
+        return expiresInDate == null || (new Date()).after(expiresInDate);
+    }
+
+    /**
      * 去年的今天
      *
      * @param date
@@ -411,39 +553,16 @@ public enum DateUtils {
         calendar.set(calendar.get(Calendar.YEAR) - 1, calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
         return calendar.getTime();
     }
-//    /**
-//     * 是否是今天
-//     *
-//     * @param date 日期
-//     * @return true 今天。 false 不是今天
-//     */
-//    public Boolean isToday(Date date) {
-//        if (date == null) {
-//            return false;
-//        }
-//
-//        String todayString = getDateString(new Date());
-//        String dateString = getDateString(date);
-//
-//        return todayString.equals(dateString);
-//    }
 
-//    /**
-//     * 是否是昨天
-//     *
-//     * @param date 日期
-//     * @return true 昨天， false 不是昨天
-//     */
-//    public Boolean isYesterday(Date date) {
-//        if (date == null) {
-//            return false;
-//        }
-//
-//        Date yesterday = getDateAfterDay(-1);
-//        String yesterdayString = getDateString(yesterday);
-//        String dateString = getDateString(date);
-//
-//        return yesterdayString.equals(dateString);
-//    }
+    public void main(String[] args) {
+        Date currentDate = new Date();
+        currentDate = getDateAfterDay(currentDate, 3);
 
+        Date afterDate = getDateAfterMin(currentDate, 4);
+
+        System.out.println(isToday(currentDate));
+
+        Date date = new Date();
+        System.out.println(getDayOfLastYear(date));
+    }
 }

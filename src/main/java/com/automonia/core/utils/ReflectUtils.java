@@ -121,7 +121,7 @@ public enum ReflectUtils {
         }
         // Date
         else if (Date.class.isAssignableFrom(typeClass)) {
-            return DateUtils.singleton.getAllFormatDate(typeValue);
+            return DateUtils.singleton.getFullDate(typeValue);
         }
         // Boolean
         else if (Boolean.class.isAssignableFrom(typeClass)) {
