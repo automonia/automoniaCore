@@ -10,7 +10,9 @@
     </parent>
     <groupId>com.github.automonia</groupId>
     <artifactId>automoniaCore</artifactId>
-    <version>0.0.24-SNAPSHOT</version>
+
+    <!--每次发布 + 0.01-->
+    <version>0.0.26-SNAPSHOT</version>
     <name>automoniaCore</name>
     <description>Demo project for Spring Boot</description>
 
@@ -19,41 +21,18 @@
     </properties>
 
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.25</version>
-            <optional>true</optional>
+            <groupId>com.github.automonia</groupId>
+            <artifactId>tools</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-            <version>1.11</version>
-            <optional>true</optional>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.9.8</version>
-            <optional>true</optional>
-        </dependency>
-
-        <!---->
-        <!---->
-        <!---->
-        <!---->
-        <!---->
 
         <!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
@@ -61,12 +40,14 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.springframework/spring-jdbc -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
+            <optional>true</optional>
             <scope>provided</scope>
         </dependency>
 
@@ -74,6 +55,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
+            <optional>true</optional>
             <scope>provided</scope>
         </dependency>
 

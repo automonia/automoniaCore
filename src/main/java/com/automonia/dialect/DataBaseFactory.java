@@ -8,6 +8,7 @@ import com.automonia.dialect.model.WTModel;
 import com.automonia.dialect.query.WTOrder;
 import com.automonia.dialect.query.WTQuery;
 import com.automonia.tools.DateUtils;
+import com.automonia.tools.ReflectUtils;
 import com.automonia.tools.StringUtils;
 import com.automonia.tools.exception.ParameterIsNullException;
 import com.automonia.tools.exception.WTException;
@@ -343,13 +344,13 @@ public enum DataBaseFactory {
         先根据group对查询条件进行分组，相同gorup间的用or。不痛group间用and
          */
         Map<String, StringBuilder> searchSqlMap = new HashMap<>();
-        for (Field fieldOfQuery : queryClass.getDeclaredFields()) {
+        for (Field fieldOfQuery : ReflectUtils.singleton.getFieldsWithInherit(queryClass)) {
             WTSearch searchAnnotation = fieldOfQuery.getAnnotation(WTSearch.class);
             if (searchAnnotation == null) {
                 continue;
             }
             TwoTuple<Object, Class> fieldValueInfo = getFieldValue(query, fieldOfQuery.getName());
-            if (fieldValueInfo == null || (StringUtils.singleton.isEmpty(com.automonia.tools.StringUtils.singleton.getString(fieldValueInfo.first)) && searchAnnotation.type() != WTSearchType.nullable)) {
+            if (fieldValueInfo == null || (StringUtils.singleton.isEmpty(StringUtils.singleton.getString(fieldValueInfo.first)) && searchAnnotation.type() != WTSearchType.nullable) || (!StringUtils.singleton.isEmpty(StringUtils.singleton.getString(fieldValueInfo.first)) && searchAnnotation.type() == WTSearchType.nullable)) {
                 continue;
             }
             String fieldEntityName = StringUtils.singleton.isEmpty(searchAnnotation.entityName()) ? entitySimpleName : searchAnnotation.entityName();
